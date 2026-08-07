@@ -82,4 +82,34 @@ describe('CallbackPage', () => {
     expect(await screen.findByText(/No pudimos completar tu acceso/)).toBeInTheDocument();
     expect(push).not.toHaveBeenCalled();
   });
+
+  it('muestra un error si falla la creación del perfil, y no borra las respuestas guardadas', async () => {
+    getUser.mockResolvedValue({ data: { user: { id: 'user-1' } } });
+    const maybeSingle = vi.fn().mockResolvedValue({ data: null });
+    const eq = vi.fn().mockReturnValue({ maybeSingle });
+    const select = vi.fn().mockReturnValue({ eq });
+    const insert = vi.fn().mockResolvedValue({ error: { message: 'constraint violation' } });
+    from.mockReturnValue({ select, insert });
+    localStorage.setItem(
+      'gel-chia-member-onboarding',
+      JSON.stringify({
+        state: {
+          answers: {
+            nombre: 'Ana',
+            peso: 70,
+            estatura: 165,
+            edad: 30,
+            horarioHambre: 'tarde',
+            antojoDulce: 7,
+            metaPeso: '5-10',
+            horaDespertar: '07:30',
+          },
+        },
+      })
+    );
+    render(<CallbackPage />);
+    expect(await screen.findByText(/No pudimos completar tu acceso/)).toBeInTheDocument();
+    expect(push).not.toHaveBeenCalled();
+    expect(localStorage.getItem('gel-chia-member-onboarding')).not.toBeNull();
+  });
 });

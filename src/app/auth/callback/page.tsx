@@ -24,15 +24,27 @@ export default function CallbackPage() {
 
   useEffect(() => {
     let cancelled = false;
+    const supabase = createClient();
+
+    async function waitForUser(maxAttempts = 3, delayMs = 300) {
+      for (let attempt = 0; attempt < maxAttempts; attempt++) {
+        const {
+          data: { user },
+        } = await supabase.auth.getUser();
+        if (user) return user;
+        if (attempt < maxAttempts - 1) {
+          await new Promise((resolve) => setTimeout(resolve, delayMs));
+        }
+      }
+      return null;
+    }
 
     async function run() {
-      const supabase = createClient();
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const user = await waitForUser();
+      if (cancelled) return;
 
       if (!user) {
-        if (!cancelled) setError(true);
+        setError(true);
         return;
       }
 
@@ -41,6 +53,7 @@ export default function CallbackPage() {
         .select('id')
         .eq('id', user.id)
         .maybeSingle();
+      if (cancelled) return;
 
       if (existing) {
         router.push('/app');
@@ -49,11 +62,11 @@ export default function CallbackPage() {
 
       const answers = readStoredAnswers();
       if (!answers) {
-        if (!cancelled) setError(true);
+        setError(true);
         return;
       }
 
-      await supabase.from('profiles').insert({
+      const { error: insertError } = await supabase.from('profiles').insert({
         id: user.id,
         nombre: answers.nombre ?? INITIAL_ONBOARDING_ANSWERS.nombre,
         peso: answers.peso,
@@ -64,6 +77,12 @@ export default function CallbackPage() {
         meta_peso: answers.metaPeso,
         hora_despertar: answers.horaDespertar,
       });
+      if (cancelled) return;
+
+      if (insertError) {
+        setError(true);
+        return;
+      }
 
       localStorage.removeItem(ONBOARDING_STORAGE_KEY);
       router.push('/app');
