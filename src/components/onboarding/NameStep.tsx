@@ -1,6 +1,7 @@
 'use client';
 
 import { OnboardingStep } from './OnboardingStep';
+import { PrimaryButton } from './PrimaryButton';
 
 type NameStepProps = {
   value: string;
@@ -21,14 +22,15 @@ export function NameStep({ value, onChange, onContinue, onBack, current, total }
       subtitle="Vamos personalizar tudo pra você ✨"
       onBack={onBack}
       footer={
-        <button
-          type="button"
+        <PrimaryButton
+          onClick={() => {
+            onChange(value.trim());
+            onContinue();
+          }}
           disabled={!isValid}
-          onClick={onContinue}
-          className="min-h-[44px] w-full rounded-full bg-brand px-6 py-3 text-lg font-bold text-white disabled:opacity-40"
         >
           CONTINUAR
-        </button>
+        </PrimaryButton>
       }
     >
       <input

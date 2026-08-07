@@ -24,7 +24,7 @@ export function IconChoiceCard({ icon, title, description, selected, onSelect }:
         <span className="block text-sm text-neutral-500">{description}</span>
       </span>
       {selected ? (
-        <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-brand text-sm text-white">
+        <span className="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full bg-brand text-sm text-foreground">
           ✓
         </span>
       ) : null}

@@ -2,6 +2,7 @@
 
 import { OnboardingStep } from './OnboardingStep';
 import { NumberStepper } from './NumberStepper';
+import { PrimaryButton } from './PrimaryButton';
 
 type HeightStepProps = {
   value: number;
@@ -20,15 +21,7 @@ export function HeightStep({ value, onChange, onContinue, onBack, current, total
       title="Qual sua altura?"
       subtitle="Vai compor seu IMC e meta"
       onBack={onBack}
-      footer={
-        <button
-          type="button"
-          onClick={onContinue}
-          className="min-h-[44px] w-full rounded-full bg-brand px-6 py-3 text-lg font-bold text-white"
-        >
-          CONTINUAR
-        </button>
-      }
+      footer={<PrimaryButton onClick={onContinue}>CONTINUAR</PrimaryButton>}
     >
       <NumberStepper value={value} onChange={onChange} suffix="cm" min={130} max={220} />
     </OnboardingStep>

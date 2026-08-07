@@ -18,7 +18,7 @@ export function WeightGoalGrid({ options, selected, onSelect }: WeightGoalGridPr
           onClick={() => onSelect(opt.value)}
           aria-pressed={selected === opt.value}
           className={`rounded-card border-2 bg-white px-4 py-6 text-center font-semibold transition-transform active:scale-[0.98] ${
-            selected === opt.value ? 'border-brand bg-brand/5 text-brand' : 'border-neutral-200 text-foreground'
+            selected === opt.value ? 'border-brand bg-brand/5 text-foreground' : 'border-neutral-200 text-foreground'
           }`}
         >
           {opt.label}

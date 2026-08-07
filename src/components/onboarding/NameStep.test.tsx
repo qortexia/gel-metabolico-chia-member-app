@@ -25,4 +25,13 @@ describe('NameStep', () => {
     await userEvent.click(screen.getByText('CONTINUAR'));
     expect(onContinue).toHaveBeenCalledOnce();
   });
+
+  it('recorta los espacios del nombre al continuar', async () => {
+    const onChange = vi.fn();
+    const onContinue = vi.fn();
+    render(<NameStep value="  Ana  " onChange={onChange} onContinue={onContinue} current={1} total={8} />);
+    await userEvent.click(screen.getByText('CONTINUAR'));
+    expect(onChange).toHaveBeenCalledWith('Ana');
+    expect(onContinue).toHaveBeenCalledOnce();
+  });
 });

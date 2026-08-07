@@ -2,6 +2,7 @@
 
 import { OnboardingStep } from './OnboardingStep';
 import { NumberStepper } from './NumberStepper';
+import { PrimaryButton } from './PrimaryButton';
 
 type AgeStepProps = {
   value: number;
@@ -19,15 +20,7 @@ export function AgeStep({ value, onChange, onContinue, onBack, current, total }:
       total={total}
       title="Qual sua idade?"
       onBack={onBack}
-      footer={
-        <button
-          type="button"
-          onClick={onContinue}
-          className="min-h-[44px] w-full rounded-full bg-brand px-6 py-3 text-lg font-bold text-white"
-        >
-          CONTINUAR
-        </button>
-      }
+      footer={<PrimaryButton onClick={onContinue}>CONTINUAR</PrimaryButton>}
     >
       <NumberStepper value={value} onChange={onChange} suffix="anos" min={16} max={100} />
     </OnboardingStep>
