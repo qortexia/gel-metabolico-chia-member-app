@@ -43,4 +43,13 @@ describe('OnboardingStep', () => {
     );
     expect(screen.getByText('Ir')).toBeInTheDocument();
   });
+
+  it('mueve el foco al título al montar', () => {
+    render(
+      <OnboardingStep current={1} total={8} title="Título">
+        <p>x</p>
+      </OnboardingStep>
+    );
+    expect(screen.getByText('Título')).toHaveFocus();
+  });
 });
