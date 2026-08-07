@@ -1,3 +1,4 @@
+import { redirect } from 'next/navigation';
 import { createClient } from '@/lib/supabase/server';
 
 export default async function AppPage() {
@@ -11,6 +12,10 @@ export default async function AppPage() {
     .select('nombre')
     .eq('id', user?.id ?? '')
     .single();
+
+  if (!profile) {
+    redirect('/');
+  }
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-6 text-center">

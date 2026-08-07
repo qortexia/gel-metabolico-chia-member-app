@@ -2,6 +2,8 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { INITIAL_ONBOARDING_ANSWERS, OnboardingAnswers } from '@/types/onboarding';
 
+export const ONBOARDING_STORAGE_KEY = 'gel-chia-member-onboarding';
+
 interface OnboardingState {
   currentIndex: number;
   answers: OnboardingAnswers;
@@ -25,7 +27,7 @@ export const useOnboardingStore = create<OnboardingState>()(
       reset: () => set({ currentIndex: 0, answers: INITIAL_ONBOARDING_ANSWERS }),
     }),
     {
-      name: 'gel-chia-member-onboarding',
+      name: ONBOARDING_STORAGE_KEY,
       // Answers saved before a future OnboardingAnswers shape change (new
       // field, or a field's type changing) must not silently overwrite
       // fresh defaults with `undefined`. Merge onto current.answers

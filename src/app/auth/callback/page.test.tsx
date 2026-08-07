@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen, waitFor } from '@testing-library/react';
 import CallbackPage from './page';
+import { createClient } from '@/lib/supabase/client';
 
 const getUser = vi.fn();
 const from = vi.fn();
@@ -11,10 +12,10 @@ vi.mock('next/navigation', () => ({
 }));
 
 vi.mock('@/lib/supabase/client', () => ({
-  createClient: () => ({
+  createClient: vi.fn(() => ({
     auth: { getUser: () => getUser() },
     from: (...args: unknown[]) => from(...args),
-  }),
+  })),
 }));
 
 function mockProfilesTable({ existing }: { existing: boolean }) {
@@ -32,6 +33,10 @@ describe('CallbackPage', () => {
     from.mockReset();
     getUser.mockReset();
     localStorage.clear();
+    vi.mocked(createClient).mockImplementation(() => ({
+      auth: { getUser: () => getUser() },
+      from: (...args: unknown[]) => from(...args),
+    }) as unknown as ReturnType<typeof createClient>);
   });
 
   it('redirige a /app directamente si ya existe un perfil para este usuario', async () => {
@@ -111,5 +116,14 @@ describe('CallbackPage', () => {
     expect(await screen.findByText(/No pudimos completar tu acceso/)).toBeInTheDocument();
     expect(push).not.toHaveBeenCalled();
     expect(localStorage.getItem('gel-chia-member-onboarding')).not.toBeNull();
+  });
+
+  it('muestra el estado de error existente en vez de crashear si createClient lanza una excepción (env mal configurado)', async () => {
+    vi.mocked(createClient).mockImplementation(() => {
+      throw new Error('Missing Supabase env vars');
+    });
+    render(<CallbackPage />);
+    expect(await screen.findByText(/No pudimos completar tu acceso/)).toBeInTheDocument();
+    expect(push).not.toHaveBeenCalled();
   });
 });

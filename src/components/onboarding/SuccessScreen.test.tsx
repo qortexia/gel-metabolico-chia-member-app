@@ -2,17 +2,21 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { SuccessScreen } from './SuccessScreen';
+import { createClient } from '@/lib/supabase/client';
 
 const signInWithOtp = vi.fn();
 vi.mock('@/lib/supabase/client', () => ({
-  createClient: () => ({
+  createClient: vi.fn(() => ({
     auth: { signInWithOtp: (...args: unknown[]) => signInWithOtp(...args) },
-  }),
+  })),
 }));
 
 describe('SuccessScreen', () => {
   beforeEach(() => {
     signInWithOtp.mockReset();
+    vi.mocked(createClient).mockImplementation(() => ({
+      auth: { signInWithOtp: (...args: unknown[]) => signInWithOtp(...args) },
+    }) as unknown as ReturnType<typeof createClient>);
   });
 
   it('muestra el nombre y el texto exacto de éxito', () => {
@@ -49,5 +53,28 @@ describe('SuccessScreen', () => {
     await userEvent.click(screen.getByText('VER MI PROTOCOLO'));
     expect(await screen.findByText(/No pudimos enviar el enlace/)).toBeInTheDocument();
     expect(screen.getByText('VER MI PROTOCOLO')).toBeInTheDocument();
+  });
+
+  it('recorta espacios del email antes de llamar a signInWithOtp', async () => {
+    signInWithOtp.mockResolvedValue({ error: null });
+    render(<SuccessScreen nombre="Ana" />);
+    await userEvent.type(screen.getByLabelText('Correo electrónico'), '  ana@example.com  ');
+    await userEvent.click(screen.getByText('VER MI PROTOCOLO'));
+    expect(signInWithOtp).toHaveBeenCalledWith({
+      email: 'ana@example.com',
+      options: { emailRedirectTo: expect.stringContaining('/auth/callback') },
+    });
+  });
+
+  it('muestra el error existente en vez de crashear si createClient lanza una excepción (env mal configurado)', async () => {
+    vi.mocked(createClient).mockImplementation(() => {
+      throw new Error('Missing Supabase env vars');
+    });
+    render(<SuccessScreen nombre="Ana" />);
+    await userEvent.type(screen.getByLabelText('Correo electrónico'), 'ana@example.com');
+    await userEvent.click(screen.getByText('VER MI PROTOCOLO'));
+    expect(await screen.findByText(/No pudimos enviar el enlace/)).toBeInTheDocument();
+    expect(screen.getByText('VER MI PROTOCOLO')).toBeInTheDocument();
+    expect(signInWithOtp).not.toHaveBeenCalled();
   });
 });

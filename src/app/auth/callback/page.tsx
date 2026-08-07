@@ -4,8 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { INITIAL_ONBOARDING_ANSWERS, type OnboardingAnswers } from '@/types/onboarding';
-
-const ONBOARDING_STORAGE_KEY = 'gel-chia-member-onboarding';
+import { ONBOARDING_STORAGE_KEY } from '@/lib/store';
 
 function readStoredAnswers(): OnboardingAnswers | null {
   const raw = localStorage.getItem(ONBOARDING_STORAGE_KEY);
@@ -24,9 +23,12 @@ export default function CallbackPage() {
 
   useEffect(() => {
     let cancelled = false;
-    const supabase = createClient();
 
-    async function waitForUser(maxAttempts = 3, delayMs = 300) {
+    async function waitForUser(
+      supabase: ReturnType<typeof createClient>,
+      maxAttempts = 3,
+      delayMs = 300
+    ) {
       for (let attempt = 0; attempt < maxAttempts; attempt++) {
         const {
           data: { user },
@@ -40,7 +42,8 @@ export default function CallbackPage() {
     }
 
     async function run() {
-      const user = await waitForUser();
+      const supabase = createClient();
+      const user = await waitForUser(supabase);
       if (cancelled) return;
 
       if (!user) {
@@ -88,7 +91,9 @@ export default function CallbackPage() {
       router.push('/app');
     }
 
-    run();
+    run().catch(() => {
+      if (!cancelled) setError(true);
+    });
 
     return () => {
       cancelled = true;

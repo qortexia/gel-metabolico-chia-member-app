@@ -15,12 +15,16 @@ export function SuccessScreen({ nombre }: SuccessScreenProps) {
 
   const handleSubmit = async () => {
     setStatus('sending');
-    const supabase = createClient();
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
-    });
-    setStatus(error ? 'error' : 'sent');
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.auth.signInWithOtp({
+        email: email.trim(),
+        options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+      });
+      setStatus(error ? 'error' : 'sent');
+    } catch {
+      setStatus('error');
+    }
   };
 
   return (
@@ -38,7 +42,13 @@ export function SuccessScreen({ nombre }: SuccessScreenProps) {
           Revisa tu correo — te enviamos un enlace para entrar a tu protocolo.
         </p>
       ) : (
-        <div className="mt-6 w-full max-w-xs">
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleSubmit();
+          }}
+          className="mt-6 w-full max-w-xs"
+        >
           <input
             type="email"
             value={email}
@@ -51,15 +61,14 @@ export function SuccessScreen({ nombre }: SuccessScreenProps) {
             <p className="mt-2 text-sm text-danger">No pudimos enviar el enlace. Intenta de nuevo.</p>
           ) : null}
           <button
-            type="button"
+            type="submit"
             disabled={status === 'sending' || email.trim().length === 0}
-            onClick={handleSubmit}
             className="mt-3 min-h-[44px] w-full rounded-full bg-brand px-6 py-3 text-lg font-bold text-foreground disabled:opacity-40"
           >
             {status === 'sending' ? 'Enviando…' : 'VER MI PROTOCOLO'}
           </button>
           <p className="mt-2 text-sm text-neutral-500">Te enviaremos un enlace mágico para entrar.</p>
-        </div>
+        </form>
       )}
     </div>
   );
