@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useOnboardingStore } from '@/lib/store';
 import { NameStep } from './NameStep';
 import { WeightStep } from './WeightStep';
@@ -21,13 +21,14 @@ export function OnboardingFunnel() {
   const [done, setDone] = useState(false);
 
   const showBack = currentIndex > 0 ? goBack : undefined;
+  const handleProcessingComplete = useCallback(() => setDone(true), []);
 
   if (done) {
     return <SuccessPlaceholder nome={answers.nome ?? ''} />;
   }
 
   if (processing) {
-    return <ProcessingScreen onComplete={() => setDone(true)} />;
+    return <ProcessingScreen onComplete={handleProcessingComplete} />;
   }
 
   const commonProps = { current: currentIndex + 1, total: TOTAL_STEPS, onBack: showBack };
