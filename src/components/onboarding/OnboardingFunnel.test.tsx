@@ -33,5 +33,6 @@ describe('OnboardingFunnel', () => {
       expect(screen.getByText('Ana')).toBeInTheDocument();
     }, { timeout: 5000 });
     expect(screen.getByText(/Protocolo listo/)).toBeInTheDocument();
+    expect(screen.getByLabelText('Correo electrónico')).toBeInTheDocument();
   });
 });

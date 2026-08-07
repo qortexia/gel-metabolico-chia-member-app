@@ -11,7 +11,7 @@ import { CravingStep } from './CravingStep';
 import { WeightGoalStep } from './WeightGoalStep';
 import { WakeTimeStep } from './WakeTimeStep';
 import { ProcessingScreen } from './ProcessingScreen';
-import { SuccessPlaceholder } from './SuccessPlaceholder';
+import { SuccessScreen } from './SuccessScreen';
 
 const TOTAL_STEPS = 8;
 
@@ -24,7 +24,7 @@ export function OnboardingFunnel() {
   const handleProcessingComplete = useCallback(() => setDone(true), []);
 
   if (done) {
-    return <SuccessPlaceholder nombre={answers.nombre ?? ''} />;
+    return <SuccessScreen nombre={answers.nombre ?? ''} />;
   }
 
   if (processing) {
