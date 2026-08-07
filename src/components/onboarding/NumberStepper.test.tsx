@@ -15,14 +15,14 @@ describe('NumberStepper', () => {
     render(<NumberStepper value={65} onChange={onChange} suffix="kg" min={30} max={250} />);
     await userEvent.click(screen.getByLabelText('Aumentar'));
     expect(onChange).toHaveBeenCalledWith(66);
-    await userEvent.click(screen.getByLabelText('Diminuir'));
+    await userEvent.click(screen.getByLabelText('Disminuir'));
     expect(onChange).toHaveBeenCalledWith(64);
   });
 
   it('no pasa del mínimo ni del máximo', async () => {
     const onChange = vi.fn();
     const { rerender } = render(<NumberStepper value={30} onChange={onChange} suffix="kg" min={30} max={31} />);
-    await userEvent.click(screen.getByLabelText('Diminuir'));
+    await userEvent.click(screen.getByLabelText('Disminuir'));
     expect(onChange).toHaveBeenCalledWith(30);
     rerender(<NumberStepper value={31} onChange={onChange} suffix="kg" min={30} max={31} />);
     await userEvent.click(screen.getByLabelText('Aumentar'));

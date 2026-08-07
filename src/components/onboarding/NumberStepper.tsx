@@ -15,7 +15,7 @@ export function NumberStepper({ value, onChange, suffix, min, max, step = 1 }: N
     <div className="flex items-center justify-center gap-4">
       <button
         type="button"
-        aria-label="Diminuir"
+        aria-label="Disminuir"
         onClick={() => onChange(clamp(value - step))}
         className="flex h-11 w-11 items-center justify-center rounded-full border border-neutral-300 text-xl text-foreground"
       >

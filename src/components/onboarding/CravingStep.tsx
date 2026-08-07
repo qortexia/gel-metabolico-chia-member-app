@@ -18,7 +18,7 @@ export function CravingStep({ value, onChange, onContinue, onBack, current, tota
     <OnboardingStep
       current={current}
       total={total}
-      title="Em escala de 0 a 10, quão descontrolada é sua vontade de doce?"
+      title="En una escala de 0 a 10, ¿qué tan descontrolado es tu antojo de dulce?"
       onBack={onBack}
       footer={<PrimaryButton onClick={onContinue}>CONTINUAR</PrimaryButton>}
     >

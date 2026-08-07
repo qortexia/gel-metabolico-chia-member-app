@@ -7,7 +7,7 @@ describe('CravingStep', () => {
   it('muestra el título exacto', () => {
     render(<CravingStep value={5} onChange={() => {}} onContinue={() => {}} current={6} total={8} />);
     expect(
-      screen.getByText('Em escala de 0 a 10, quão descontrolada é sua vontade de doce?')
+      screen.getByText('En una escala de 0 a 10, ¿qué tan descontrolado es tu antojo de dulce?')
     ).toBeInTheDocument();
   });
 

@@ -22,8 +22,8 @@ export function ProcessingScreen({ onComplete, durationMs = 3000 }: ProcessingSc
         <span className="absolute h-20 w-20 animate-spin rounded-full border-4 border-neutral-200 border-t-brand" />
         <span className="text-3xl">✨</span>
       </div>
-      <h1 className="mt-6 font-serif text-2xl font-bold text-foreground">Montando seu protocolo personalizado…</h1>
-      <p className="mt-2 text-neutral-600">Calculando sua dose ideal, horários e ritual ✨</p>
+      <h1 className="mt-6 font-serif text-2xl font-bold text-foreground">Armando tu protocolo personalizado…</h1>
+      <p className="mt-2 text-neutral-600">Calculando tu dosis ideal, horarios y ritual ✨</p>
     </div>
   );
 }

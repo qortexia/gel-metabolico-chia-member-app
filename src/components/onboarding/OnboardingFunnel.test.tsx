@@ -11,27 +11,27 @@ describe('OnboardingFunnel', () => {
 
   it('renderiza la primera pantalla (nombre)', () => {
     render(<OnboardingFunnel />);
-    expect(screen.getByText('Qual seu nome?')).toBeInTheDocument();
+    expect(screen.getByText('¿Cuál es tu nombre?')).toBeInTheDocument();
   });
 
   it('avanza de una pantalla a otra al completar cada paso', async () => {
     render(<OnboardingFunnel />);
-    await userEvent.type(screen.getByPlaceholderText('Seu primeiro nome'), 'Ana');
+    await userEvent.type(screen.getByPlaceholderText('Tu primer nombre'), 'Ana');
     await userEvent.click(screen.getByText('CONTINUAR'));
-    expect(screen.getByText('Qual seu peso atual hoje?')).toBeInTheDocument();
-    expect(useOnboardingStore.getState().answers.nome).toBe('Ana');
+    expect(screen.getByText('¿Cuál es tu peso actual hoy?')).toBeInTheDocument();
+    expect(useOnboardingStore.getState().answers.nombre).toBe('Ana');
   });
 
   it('recorre las 8 etapas y llega a la pantalla de éxito con el nombre correcto', async () => {
-    useOnboardingStore.getState().setAnswer('nome', 'Ana');
+    useOnboardingStore.getState().setAnswer('nombre', 'Ana');
     useOnboardingStore.getState().goToIndex(7);
     render(<OnboardingFunnel />);
     const user = userEvent.setup();
     await user.click(screen.getByText('FINALIZAR'));
-    expect(screen.getByText('Montando seu protocolo personalizado…')).toBeInTheDocument();
+    expect(screen.getByText('Armando tu protocolo personalizado…')).toBeInTheDocument();
     await waitFor(() => {
       expect(screen.getByText('Ana')).toBeInTheDocument();
     }, { timeout: 5000 });
-    expect(screen.getByText(/Protocolo pronto/)).toBeInTheDocument();
+    expect(screen.getByText(/Protocolo listo/)).toBeInTheDocument();
   });
 });

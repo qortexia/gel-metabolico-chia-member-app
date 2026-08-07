@@ -6,13 +6,13 @@ const inter = Inter({ subsets: ['latin'], variable: '--font-inter' });
 const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfair' });
 
 export const metadata: Metadata = {
-  title: 'Protocolo Gel Metabólico de Chia — Seu app de acompanhamento',
-  description: 'Sua receita, seu horário e seu progresso do Protocolo Gel Metabólico de Chia.',
+  title: 'Protocolo Gel Metabólico de Chía — Tu app de seguimiento',
+  description: 'Tu receta, tu horario y tu progreso del Protocolo Gel Metabólico de Chía.',
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="pt-BR">
+    <html lang="es-MX">
       <body className={`${inter.variable} ${playfair.variable} font-sans`}>{children}</body>
     </html>
   );

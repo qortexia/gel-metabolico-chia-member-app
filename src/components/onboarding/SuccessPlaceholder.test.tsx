@@ -4,11 +4,11 @@ import { SuccessPlaceholder } from './SuccessPlaceholder';
 
 describe('SuccessPlaceholder', () => {
   it('muestra el nombre y el texto exacto', () => {
-    render(<SuccessPlaceholder nome="Ana" />);
+    render(<SuccessPlaceholder nombre="Ana" />);
     expect(screen.getByText('Ana')).toBeInTheDocument();
-    expect(screen.getByText(/Protocolo pronto/)).toBeInTheDocument();
+    expect(screen.getByText(/Protocolo listo/)).toBeInTheDocument();
     expect(
-      screen.getByText('Sua dose, horários e checklist de 21 dias estão prontinhos pra você começar agora.')
+      screen.getByText('Tu dosis, horarios y checklist de 21 días ya están listos para que empieces ahora.')
     ).toBeInTheDocument();
   });
 });

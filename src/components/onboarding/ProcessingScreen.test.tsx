@@ -13,8 +13,8 @@ describe('ProcessingScreen', () => {
 
   it('muestra el texto exacto', () => {
     render(<ProcessingScreen onComplete={() => {}} />);
-    expect(screen.getByText('Montando seu protocolo personalizado…')).toBeInTheDocument();
-    expect(screen.getByText('Calculando sua dose ideal, horários e ritual ✨')).toBeInTheDocument();
+    expect(screen.getByText('Armando tu protocolo personalizado…')).toBeInTheDocument();
+    expect(screen.getByText('Calculando tu dosis ideal, horarios y ritual ✨')).toBeInTheDocument();
   });
 
   it('llama a onComplete después de durationMs', () => {

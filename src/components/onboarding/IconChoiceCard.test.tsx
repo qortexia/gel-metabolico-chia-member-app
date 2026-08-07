@@ -6,16 +6,16 @@ import { IconChoiceCard } from './IconChoiceCard';
 describe('IconChoiceCard', () => {
   it('muestra el ícono, título y descripción', () => {
     render(
-      <IconChoiceCard icon="🌅" title="De manhã" description="antes do almoço" selected={false} onSelect={() => {}} />
+      <IconChoiceCard icon="🌅" title="Por la mañana" description="antes del almuerzo" selected={false} onSelect={() => {}} />
     );
     expect(screen.getByText('🌅')).toBeInTheDocument();
-    expect(screen.getByText('De manhã')).toBeInTheDocument();
-    expect(screen.getByText('antes do almoço')).toBeInTheDocument();
+    expect(screen.getByText('Por la mañana')).toBeInTheDocument();
+    expect(screen.getByText('antes del almuerzo')).toBeInTheDocument();
   });
 
   it('marca aria-pressed cuando está seleccionado', () => {
     render(
-      <IconChoiceCard icon="🌅" title="De manhã" description="antes do almoço" selected onSelect={() => {}} />
+      <IconChoiceCard icon="🌅" title="Por la mañana" description="antes del almuerzo" selected onSelect={() => {}} />
     );
     expect(screen.getByRole('button')).toHaveAttribute('aria-pressed', 'true');
   });
@@ -23,7 +23,7 @@ describe('IconChoiceCard', () => {
   it('llama a onSelect al hacer clic', async () => {
     const onSelect = vi.fn();
     render(
-      <IconChoiceCard icon="🌅" title="De manhã" description="antes do almoço" selected={false} onSelect={onSelect} />
+      <IconChoiceCard icon="🌅" title="Por la mañana" description="antes del almuerzo" selected={false} onSelect={onSelect} />
     );
     await userEvent.click(screen.getByRole('button'));
     expect(onSelect).toHaveBeenCalledOnce();

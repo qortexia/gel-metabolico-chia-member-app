@@ -9,13 +9,13 @@ describe('useOnboardingStore', () => {
   it('starts at index 0 with the default answers', () => {
     const state = useOnboardingStore.getState();
     expect(state.currentIndex).toBe(0);
-    expect(state.answers.nome).toBeNull();
+    expect(state.answers.nombre).toBeNull();
     expect(state.answers.peso).toBe(65);
   });
 
   it('setAnswer updates only the given field', () => {
-    useOnboardingStore.getState().setAnswer('nome', 'Valentina');
-    expect(useOnboardingStore.getState().answers.nome).toBe('Valentina');
+    useOnboardingStore.getState().setAnswer('nombre', 'Valentina');
+    expect(useOnboardingStore.getState().answers.nombre).toBe('Valentina');
     expect(useOnboardingStore.getState().answers.peso).toBe(65);
   });
 
@@ -36,20 +36,20 @@ describe('useOnboardingStore', () => {
   });
 
   it('reset clears the index and answers', () => {
-    useOnboardingStore.getState().setAnswer('nome', 'Valentina');
+    useOnboardingStore.getState().setAnswer('nombre', 'Valentina');
     useOnboardingStore.getState().goToIndex(3);
     useOnboardingStore.getState().reset();
     expect(useOnboardingStore.getState().currentIndex).toBe(0);
-    expect(useOnboardingStore.getState().answers.nome).toBeNull();
+    expect(useOnboardingStore.getState().answers.nombre).toBeNull();
   });
 
-  describe('rehidratação desde localStorage com um esquema anterior', () => {
-    it('preenche com os valores por padrão os campos ausentes num guardado mais antigo', () => {
+  describe('rehidratación desde localStorage con un esquema anterior', () => {
+    it('rellena con los valores por defecto los campos ausentes en un guardado más antiguo', () => {
       const merge = useOnboardingStore.persist.getOptions().merge!;
       const current = useOnboardingStore.getState();
-      const { vontadeDoce, ...answersSemVontadeDoce } = current.answers;
-      const merged = merge({ answers: answersSemVontadeDoce }, current) as typeof current;
-      expect(merged.answers.vontadeDoce).toBe(5);
+      const { antojoDulce, ...answersSinAntojoDulce } = current.answers;
+      const merged = merge({ answers: answersSinAntojoDulce }, current) as typeof current;
+      expect(merged.answers.antojoDulce).toBe(5);
     });
   });
 });

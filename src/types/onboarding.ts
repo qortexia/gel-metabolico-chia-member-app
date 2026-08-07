@@ -1,21 +1,21 @@
 export interface OnboardingAnswers {
-  nome: string | null;
+  nombre: string | null;
   peso: number;
-  altura: number;
-  idade: number;
-  horarioFome: string | null;
-  vontadeDoce: number;
+  estatura: number;
+  edad: number;
+  horarioHambre: string | null;
+  antojoDulce: number;
   metaPeso: string | null;
-  horarioAcorda: string;
+  horaDespertar: string;
 }
 
 export const INITIAL_ONBOARDING_ANSWERS: OnboardingAnswers = {
-  nome: null,
+  nombre: null,
   peso: 65,
-  altura: 165,
-  idade: 32,
-  horarioFome: null,
-  vontadeDoce: 5,
+  estatura: 165,
+  edad: 32,
+  horarioHambre: null,
+  antojoDulce: 5,
   metaPeso: null,
-  horarioAcorda: '07:00',
+  horaDespertar: '07:00',
 };

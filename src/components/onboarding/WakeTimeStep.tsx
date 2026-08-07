@@ -18,8 +18,8 @@ export function WakeTimeStep({ value, onChange, onFinish, onBack, current, total
     <OnboardingStep
       current={current}
       total={total}
-      title="Qual horário você normalmente acorda?"
-      subtitle="Pra agendar seus lembretes"
+      title="¿A qué hora sueles despertar?"
+      subtitle="Para programar tus recordatorios"
       onBack={onBack}
       footer={<PrimaryButton onClick={onFinish}>FINALIZAR</PrimaryButton>}
     >

@@ -24,7 +24,7 @@ export function OnboardingFunnel() {
   const handleProcessingComplete = useCallback(() => setDone(true), []);
 
   if (done) {
-    return <SuccessPlaceholder nome={answers.nome ?? ''} />;
+    return <SuccessPlaceholder nombre={answers.nombre ?? ''} />;
   }
 
   if (processing) {
@@ -36,28 +36,28 @@ export function OnboardingFunnel() {
   switch (currentIndex) {
     case 0:
       return (
-        <NameStep {...commonProps} value={answers.nome ?? ''} onChange={(v) => setAnswer('nome', v)} onContinue={goNext} />
+        <NameStep {...commonProps} value={answers.nombre ?? ''} onChange={(v) => setAnswer('nombre', v)} onContinue={goNext} />
       );
     case 1:
       return <WeightStep {...commonProps} value={answers.peso} onChange={(v) => setAnswer('peso', v)} onContinue={goNext} />;
     case 2:
-      return <HeightStep {...commonProps} value={answers.altura} onChange={(v) => setAnswer('altura', v)} onContinue={goNext} />;
+      return <HeightStep {...commonProps} value={answers.estatura} onChange={(v) => setAnswer('estatura', v)} onContinue={goNext} />;
     case 3:
-      return <AgeStep {...commonProps} value={answers.idade} onChange={(v) => setAnswer('idade', v)} onContinue={goNext} />;
+      return <AgeStep {...commonProps} value={answers.edad} onChange={(v) => setAnswer('edad', v)} onContinue={goNext} />;
     case 4:
       return (
         <HungerTimeStep
           {...commonProps}
-          value={answers.horarioFome}
+          value={answers.horarioHambre}
           onSelect={(v) => {
-            setAnswer('horarioFome', v);
+            setAnswer('horarioHambre', v);
             goNext();
           }}
         />
       );
     case 5:
       return (
-        <CravingStep {...commonProps} value={answers.vontadeDoce} onChange={(v) => setAnswer('vontadeDoce', v)} onContinue={goNext} />
+        <CravingStep {...commonProps} value={answers.antojoDulce} onChange={(v) => setAnswer('antojoDulce', v)} onContinue={goNext} />
       );
     case 6:
       return (
@@ -74,8 +74,8 @@ export function OnboardingFunnel() {
       return (
         <WakeTimeStep
           {...commonProps}
-          value={answers.horarioAcorda}
-          onChange={(v) => setAnswer('horarioAcorda', v)}
+          value={answers.horaDespertar}
+          onChange={(v) => setAnswer('horaDespertar', v)}
           onFinish={() => setProcessing(true)}
         />
       );

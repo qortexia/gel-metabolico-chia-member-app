@@ -18,8 +18,8 @@ export function NameStep({ value, onChange, onContinue, onBack, current, total }
     <OnboardingStep
       current={current}
       total={total}
-      title="Qual seu nome?"
-      subtitle="Vamos personalizar tudo pra você ✨"
+      title="¿Cuál es tu nombre?"
+      subtitle="Vamos a personalizar todo para ti ✨"
       onBack={onBack}
       footer={
         <PrimaryButton
@@ -36,7 +36,7 @@ export function NameStep({ value, onChange, onContinue, onBack, current, total }
       <input
         type="text"
         value={value}
-        placeholder="Seu primeiro nome"
+        placeholder="Tu primer nombre"
         onChange={(e) => onChange(e.target.value)}
         className="w-full rounded-card border border-neutral-300 px-4 py-3 text-lg"
       />

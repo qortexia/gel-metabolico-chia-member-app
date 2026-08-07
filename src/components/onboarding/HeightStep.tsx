@@ -18,8 +18,8 @@ export function HeightStep({ value, onChange, onContinue, onBack, current, total
     <OnboardingStep
       current={current}
       total={total}
-      title="Qual sua altura?"
-      subtitle="Vai compor seu IMC e meta"
+      title="¿Cuál es tu estatura?"
+      subtitle="Va a formar parte de tu IMC y tu meta"
       onBack={onBack}
       footer={<PrimaryButton onClick={onContinue}>CONTINUAR</PrimaryButton>}
     >

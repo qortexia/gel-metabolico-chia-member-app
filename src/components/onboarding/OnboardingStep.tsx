@@ -37,7 +37,7 @@ export function OnboardingStep({
             <button
               type="button"
               onClick={onBack}
-              aria-label="Voltar"
+              aria-label="Volver"
               className="flex min-h-[44px] min-w-[44px] items-center justify-center text-xl"
             >
               ←

@@ -28,11 +28,11 @@ export function CravingSlider({ value, onChange }: CravingSliderProps) {
         value={value}
         onChange={(e) => onChange(Number(e.target.value))}
         className="mt-6 w-full accent-brand"
-        aria-label="Nível de vontade de doce, de 0 a 10"
+        aria-label="Nivel de antojo de dulce, de 0 a 10"
       />
       <div className="mt-2 flex justify-between text-sm text-neutral-500">
-        <span>controlada</span>
-        <span>descontrolada</span>
+        <span>controlado</span>
+        <span>descontrolado</span>
       </div>
     </div>
   );

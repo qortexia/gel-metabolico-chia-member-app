@@ -6,8 +6,8 @@ import { WeightStep } from './WeightStep';
 describe('WeightStep', () => {
   it('muestra el título, subtítulo y el valor con sufijo kg', () => {
     render(<WeightStep value={65} onChange={() => {}} onContinue={() => {}} current={2} total={8} />);
-    expect(screen.getByText('Qual seu peso atual hoje?')).toBeInTheDocument();
-    expect(screen.getByText('Usamos pra calcular sua dose ideal')).toBeInTheDocument();
+    expect(screen.getByText('¿Cuál es tu peso actual hoy?')).toBeInTheDocument();
+    expect(screen.getByText('Lo usamos para calcular tu dosis ideal')).toBeInTheDocument();
     expect(screen.getByText('kg')).toBeInTheDocument();
   });
 

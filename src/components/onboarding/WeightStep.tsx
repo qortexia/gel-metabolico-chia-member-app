@@ -18,8 +18,8 @@ export function WeightStep({ value, onChange, onContinue, onBack, current, total
     <OnboardingStep
       current={current}
       total={total}
-      title="Qual seu peso atual hoje?"
-      subtitle="Usamos pra calcular sua dose ideal"
+      title="¿Cuál es tu peso actual hoy?"
+      subtitle="Lo usamos para calcular tu dosis ideal"
       onBack={onBack}
       footer={<PrimaryButton onClick={onContinue}>CONTINUAR</PrimaryButton>}
     >

@@ -7,12 +7,12 @@ describe('OnboardingStep', () => {
   it('muestra el título, subtítulo y los children', () => {
     render(
       <OnboardingStep current={1} total={8} title="Título" subtitle="Sub">
-        <p>Conteúdo</p>
+        <p>Contenido</p>
       </OnboardingStep>
     );
     expect(screen.getByText('Título')).toBeInTheDocument();
     expect(screen.getByText('Sub')).toBeInTheDocument();
-    expect(screen.getByText('Conteúdo')).toBeInTheDocument();
+    expect(screen.getByText('Contenido')).toBeInTheDocument();
   });
 
   it('no muestra el botón de volver cuando no se pasa onBack', () => {
@@ -21,7 +21,7 @@ describe('OnboardingStep', () => {
         <p>x</p>
       </OnboardingStep>
     );
-    expect(screen.queryByLabelText('Voltar')).not.toBeInTheDocument();
+    expect(screen.queryByLabelText('Volver')).not.toBeInTheDocument();
   });
 
   it('llama a onBack al hacer clic en el botón de volver', async () => {
@@ -31,7 +31,7 @@ describe('OnboardingStep', () => {
         <p>x</p>
       </OnboardingStep>
     );
-    await userEvent.click(screen.getByLabelText('Voltar'));
+    await userEvent.click(screen.getByLabelText('Volver'));
     expect(onBack).toHaveBeenCalledOnce();
   });
 

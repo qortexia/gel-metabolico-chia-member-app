@@ -6,9 +6,9 @@ import { NameStep } from './NameStep';
 describe('NameStep', () => {
   it('muestra el título, subtítulo y placeholder exactos', () => {
     render(<NameStep value="" onChange={() => {}} onContinue={() => {}} current={1} total={8} />);
-    expect(screen.getByText('Qual seu nome?')).toBeInTheDocument();
-    expect(screen.getByText('Vamos personalizar tudo pra você ✨')).toBeInTheDocument();
-    expect(screen.getByPlaceholderText('Seu primeiro nome')).toBeInTheDocument();
+    expect(screen.getByText('¿Cuál es tu nombre?')).toBeInTheDocument();
+    expect(screen.getByText('Vamos a personalizar todo para ti ✨')).toBeInTheDocument();
+    expect(screen.getByPlaceholderText('Tu primer nombre')).toBeInTheDocument();
   });
 
   it('deshabilita Continuar cuando el valor está vacío', () => {
@@ -20,7 +20,7 @@ describe('NameStep', () => {
     const onChange = vi.fn();
     const onContinue = vi.fn();
     render(<NameStep value="Ana" onChange={onChange} onContinue={onContinue} current={1} total={8} />);
-    await userEvent.type(screen.getByPlaceholderText('Seu primeiro nome'), 'x');
+    await userEvent.type(screen.getByPlaceholderText('Tu primer nombre'), 'x');
     expect(onChange).toHaveBeenCalled();
     await userEvent.click(screen.getByText('CONTINUAR'));
     expect(onContinue).toHaveBeenCalledOnce();

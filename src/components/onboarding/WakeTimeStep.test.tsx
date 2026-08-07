@@ -6,8 +6,8 @@ import { WakeTimeStep } from './WakeTimeStep';
 describe('WakeTimeStep', () => {
   it('muestra el título, subtítulo y el botón FINALIZAR', () => {
     render(<WakeTimeStep value="07:00" onChange={() => {}} onFinish={() => {}} current={8} total={8} />);
-    expect(screen.getByText('Qual horário você normalmente acorda?')).toBeInTheDocument();
-    expect(screen.getByText('Pra agendar seus lembretes')).toBeInTheDocument();
+    expect(screen.getByText('¿A qué hora sueles despertar?')).toBeInTheDocument();
+    expect(screen.getByText('Para programar tus recordatorios')).toBeInTheDocument();
     expect(screen.getByText('FINALIZAR')).toBeInTheDocument();
   });
 

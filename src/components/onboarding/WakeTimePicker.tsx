@@ -13,10 +13,10 @@ export function WakeTimePicker({ value, onChange }: WakeTimePickerProps) {
         type="time"
         value={value}
         onChange={(e) => onChange(e.target.value)}
-        aria-label="Horário que você acorda"
+        aria-label="Hora en que despiertas"
         className="rounded-card border border-neutral-300 px-4 py-3 text-2xl font-bold text-foreground"
       />
-      <p className="text-sm text-neutral-500">toque pra ajustar</p>
+      <p className="text-sm text-neutral-500">toca para ajustar</p>
     </div>
   );
 }
