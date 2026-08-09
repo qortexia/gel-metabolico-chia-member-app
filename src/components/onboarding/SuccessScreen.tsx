@@ -15,23 +15,46 @@ type Status =
   | 'send-error'
   | 'code-sent'
   | 'resending'
+  | 'resend-error'
   | 'verifying'
   | 'code-error'
   | 'signin-error';
+
+type MaybeAuthError = { status?: number; message?: string } | null | undefined;
+
+function getErrorMessage(context: 'send' | 'resend' | 'code', error?: MaybeAuthError): string {
+  if (error?.status === 429) {
+    return 'Demasiados intentos. Espera unos minutos antes de volver a intentar.';
+  }
+  if (context === 'send') {
+    return 'No pudimos enviar el código. Intenta de nuevo.';
+  }
+  if (context === 'resend') {
+    return 'No pudimos reenviar el código. Si ya recibiste uno, puedes usarlo abajo.';
+  }
+  return 'Código incorrecto o expirado. Intenta de nuevo.';
+}
 
 export function SuccessScreen({ nombre }: SuccessScreenProps) {
   const router = useRouter();
   const [email, setEmail] = useState('');
   const [code, setCode] = useState('');
   const [status, setStatus] = useState<Status>('idle');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   async function handleSendCode() {
     setStatus('sending');
     try {
       const supabase = createClient();
       const { error } = await supabase.auth.signInWithOtp({ email: email.trim() });
-      setStatus(error ? 'send-error' : 'code-sent');
+      if (error) {
+        setErrorMessage(getErrorMessage('send', error));
+        setStatus('send-error');
+      } else {
+        setStatus('code-sent');
+      }
     } catch {
+      setErrorMessage(getErrorMessage('send'));
       setStatus('send-error');
     }
   }
@@ -41,9 +64,15 @@ export function SuccessScreen({ nombre }: SuccessScreenProps) {
     try {
       const supabase = createClient();
       const { error } = await supabase.auth.signInWithOtp({ email: email.trim() });
-      setStatus(error ? 'send-error' : 'code-sent');
+      if (error) {
+        setErrorMessage(getErrorMessage('resend', error));
+        setStatus('resend-error');
+      } else {
+        setStatus('code-sent');
+      }
     } catch {
-      setStatus('send-error');
+      setErrorMessage(getErrorMessage('resend'));
+      setStatus('resend-error');
     }
   }
 
@@ -56,7 +85,8 @@ export function SuccessScreen({ nombre }: SuccessScreenProps) {
         token: code.trim(),
         type: 'email',
       });
-      if (error || !data.user) {
+      if (error || !data.session || !data.user) {
+        setErrorMessage(getErrorMessage('code', error));
         setStatus('code-error');
         return;
       }
@@ -65,12 +95,17 @@ export function SuccessScreen({ nombre }: SuccessScreenProps) {
         setStatus('signin-error');
       }
     } catch {
+      setErrorMessage(getErrorMessage('code'));
       setStatus('code-error');
     }
   }
 
   const showCodeForm =
-    status === 'code-sent' || status === 'verifying' || status === 'code-error' || status === 'resending';
+    status === 'code-sent' ||
+    status === 'verifying' ||
+    status === 'code-error' ||
+    status === 'resending' ||
+    status === 'resend-error';
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-6 text-center">
@@ -97,14 +132,15 @@ export function SuccessScreen({ nombre }: SuccessScreenProps) {
             type="text"
             inputMode="numeric"
             maxLength={6}
+            autoComplete="one-time-code"
             value={code}
             onChange={(e) => setCode(e.target.value)}
             placeholder="123456"
             aria-label="Código de 6 dígitos"
             className="mt-3 w-full rounded-card border border-neutral-300 px-4 py-3 text-center text-lg tracking-widest"
           />
-          {status === 'code-error' ? (
-            <p className="mt-2 text-sm text-danger">Código incorrecto o expirado. Intenta de nuevo.</p>
+          {status === 'code-error' || status === 'resend-error' ? (
+            <p className="mt-2 text-sm text-danger">{errorMessage}</p>
           ) : null}
           <button
             type="submit"
@@ -138,9 +174,7 @@ export function SuccessScreen({ nombre }: SuccessScreenProps) {
             aria-label="Correo electrónico"
             className="w-full rounded-card border border-neutral-300 px-4 py-3 text-lg"
           />
-          {status === 'send-error' ? (
-            <p className="mt-2 text-sm text-danger">No pudimos enviar el código. Intenta de nuevo.</p>
-          ) : null}
+          {status === 'send-error' ? <p className="mt-2 text-sm text-danger">{errorMessage}</p> : null}
           <button
             type="submit"
             disabled={status === 'sending' || email.trim().length === 0}
