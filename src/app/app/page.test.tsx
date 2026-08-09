@@ -12,6 +12,7 @@ vi.mock('@/lib/profile', () => ({
       edad: 30,
       hora_despertar: '07:00',
       protocol_start_date: '2026-08-01',
+      reminders_enabled: true,
     }),
 }));
 
@@ -38,6 +39,12 @@ vi.mock('@/components/app/MonthCalendar', () => ({
 
 vi.mock('@/components/app/ResetProtocolButton', () => ({
   ResetProtocolButton: () => <button type="button">↺ Recomenzar protocolo</button>,
+}));
+
+vi.mock('@/components/app/RemindersToggle', () => ({
+  RemindersToggle: ({ enabled }: { enabled: boolean }) => (
+    <div data-testid="reminders-toggle">{enabled ? 'activado' : 'desactivado'}</div>
+  ),
 }));
 
 describe('AppPage (Início)', () => {
@@ -70,5 +77,11 @@ describe('AppPage (Início)', () => {
     render(await AppPage());
     expect(screen.getByTestId('checkin-button')).toHaveTextContent('hecho');
     vi.useRealTimers();
+  });
+
+  it('pasa enabled=true al RemindersToggle según el perfil', async () => {
+    select.mockResolvedValue({ data: [] });
+    render(await AppPage());
+    expect(screen.getByTestId('reminders-toggle')).toHaveTextContent('activado');
   });
 });

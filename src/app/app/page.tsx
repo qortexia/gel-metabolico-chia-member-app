@@ -4,6 +4,7 @@ import { calculateStreak } from '@/lib/achievements';
 import { CheckinButton } from '@/components/app/CheckinButton';
 import { MonthCalendar } from '@/components/app/MonthCalendar';
 import { ResetProtocolButton } from '@/components/app/ResetProtocolButton';
+import { RemindersToggle } from '@/components/app/RemindersToggle';
 
 export default async function AppPage() {
   const profile = await getCurrentProfile();
@@ -20,7 +21,8 @@ export default async function AppPage() {
 
   return (
     <div className="px-4 pb-24 pt-6">
-      <div className="flex justify-end">
+      <div className="flex items-center justify-end gap-3">
+        <RemindersToggle userId={profile.id} enabled={profile.reminders_enabled} />
         <ResetProtocolButton />
       </div>
 

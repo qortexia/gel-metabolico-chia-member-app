@@ -10,5 +10,6 @@ export interface Profile {
   hora_despertar: string;
   protocol_start_date: string;
   last_reminder_sent_at: string | null;
+  reminders_enabled: boolean;
   created_at: string;
 }
