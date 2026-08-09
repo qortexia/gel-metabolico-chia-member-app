@@ -18,26 +18,31 @@ function buildEmailHtml(nombre: string | null, horaDespertar: string): string {
         <a href="${APP_URL}" style="background-color:#C9A227;color:#2B2013;padding:12px 24px;border-radius:999px;text-decoration:none;font-weight:bold;">VER MI PROTOCOLO</a>
       </p>
       <p>💡 Consejo del Dr. Renan: la constancia es lo que hace la diferencia — un día a la vez.</p>
-      <p style="font-size:13px;color:#6b6b6b;">¿Ya no quieres recibir este recordatorio? Puedes desactivarlo desde tu app, en Início.</p>
+      <p style="font-size:13px;color:#6b6b6b;">¿Ya no quieres recibir este recordatorio? Puedes desactivarlo desde tu app, en Inicio.</p>
     </div>
   `;
 }
 
 async function sendReminderEmail(email: string, nombre: string | null, horaDespertar: string): Promise<boolean> {
-  const response = await fetch('https://api.resend.com/emails', {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${RESEND_API_KEY}`,
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify({
-      from: FROM_EMAIL,
-      to: email,
-      subject: 'Es hora de tu dosis de hoy 🌱',
-      html: buildEmailHtml(nombre, horaDespertar),
-    }),
-  });
-  return response.ok;
+  try {
+    const response = await fetch('https://api.resend.com/emails', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${RESEND_API_KEY}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        from: FROM_EMAIL,
+        to: email,
+        subject: 'Es hora de tu dosis de hoy 🌱',
+        html: buildEmailHtml(nombre, horaDespertar),
+      }),
+    });
+    return response.ok;
+  } catch (err) {
+    console.error('Resend fetch threw a network-level error', err);
+    return false;
+  }
 }
 
 Deno.serve(async () => {
