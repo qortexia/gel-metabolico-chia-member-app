@@ -51,7 +51,7 @@ export default async function PreparePage() {
       </div>
 
       <div className="mt-4 rounded-card bg-brand/10 p-4">
-        <p className="text-xs font-bold uppercase text-brand">Consejo del Dr. Renan</p>
+        <p className="text-xs font-bold uppercase text-brand">Consejo de la Dra. Gabriela Treviño</p>
         <p className="mt-1 text-sm text-foreground">
           &ldquo;Si el gel queda muy espeso, agrega un chorrito más de agua. Si queda muy líquido, deja reposar 2
           minutos más.&rdquo;

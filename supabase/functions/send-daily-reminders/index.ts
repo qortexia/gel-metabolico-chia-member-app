@@ -18,7 +18,7 @@ function buildEmailHtml(nombre: string | null, horaDespertar: string): string {
       <p style="text-align:center;margin:24px 0;">
         <a href="${APP_URL}" style="background-color:#C9A227;color:#2B2013;padding:12px 24px;border-radius:999px;text-decoration:none;font-weight:bold;">VER MI PROTOCOLO</a>
       </p>
-      <p>💡 Consejo del Dr. Renan: la constancia es lo que hace la diferencia — un día a la vez.</p>
+      <p>💡 Consejo de la Dra. Gabriela Treviño: la constancia es lo que hace la diferencia — un día a la vez.</p>
       <p style="font-size:13px;color:#6b6b6b;">¿Ya no quieres recibir este recordatorio? Puedes desactivarlo desde tu app, en Inicio.</p>
     </div>
   `;

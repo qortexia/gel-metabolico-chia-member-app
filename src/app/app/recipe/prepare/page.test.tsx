@@ -17,8 +17,8 @@ describe('PreparePage', () => {
     expect(screen.getByText(/5\. Toma todo el vaso/)).toBeInTheDocument();
   });
 
-  it('incluye el consejo del Dr. Renan', async () => {
+  it('incluye el consejo de la Dra. Gabriela Treviño', async () => {
     render(await PreparePage());
-    expect(screen.getByText('Consejo del Dr. Renan')).toBeInTheDocument();
+    expect(screen.getByText('Consejo de la Dra. Gabriela Treviño')).toBeInTheDocument();
   });
 });
