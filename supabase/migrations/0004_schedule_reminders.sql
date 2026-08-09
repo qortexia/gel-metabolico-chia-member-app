@@ -5,6 +5,7 @@ create extension if not exists pg_net with schema extensions;
 -- it stores the service role key in Supabase Vault so it never appears in plain text in
 -- cron.job or pg_stat_statements. Do NOT commit a real key into this file.
 -- select vault.create_secret('<your-service-role-key>', 'reminders_service_role_key');
+-- select vault.create_secret('<a-random-secret-you-generate>', 'reminders_cron_secret');
 
 select cron.schedule(
   'send-daily-reminders',
@@ -16,6 +17,9 @@ select cron.schedule(
       'Content-Type', 'application/json',
       'Authorization', 'Bearer ' || (
         select decrypted_secret from vault.decrypted_secrets where name = 'reminders_service_role_key'
+      ),
+      'x-reminders-secret', (
+        select decrypted_secret from vault.decrypted_secrets where name = 'reminders_cron_secret'
       )
     ),
     body := '{}'::jsonb
