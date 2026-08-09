@@ -1,4 +1,4 @@
-import { describe, it, expect, vi } from 'vitest';
+import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { render, screen } from '@testing-library/react';
 import AppPage from './page';
 
@@ -41,6 +41,15 @@ vi.mock('@/components/app/ResetProtocolButton', () => ({
 }));
 
 describe('AppPage (Início)', () => {
+  beforeEach(() => {
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-08-08T12:00:00Z'));
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
   it('muestra el saludo, el día actual y el resumen de check-ins', async () => {
     select.mockResolvedValue({ data: [{ date: '2026-08-01' }, { date: '2026-08-02' }] });
     render(await AppPage());
