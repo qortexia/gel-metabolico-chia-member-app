@@ -8,22 +8,18 @@ export function ResetProtocolButton() {
   const router = useRouter();
   const [confirming, setConfirming] = useState(false);
   const [resetting, setResetting] = useState(false);
+  const [error, setError] = useState(false);
 
   async function handleConfirm() {
     setResetting(true);
+    setError(false);
     const supabase = createClient();
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
-    if (!user) {
+    const { error: rpcError } = await supabase.rpc('reset_protocol');
+    if (rpcError) {
       setResetting(false);
+      setError(true);
       return;
     }
-    await supabase.from('checkins').delete().eq('user_id', user.id);
-    await supabase
-      .from('profiles')
-      .update({ protocol_start_date: new Date().toISOString().slice(0, 10) })
-      .eq('id', user.id);
     setResetting(false);
     setConfirming(false);
     router.refresh();
@@ -52,6 +48,9 @@ export function ResetProtocolButton() {
             Cancelar
           </button>
         </div>
+        {error ? (
+          <p className="mt-2 text-sm text-danger">No pudimos reiniciar tu protocolo. Intenta de nuevo.</p>
+        ) : null}
       </div>
     );
   }

@@ -3,20 +3,12 @@ import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ResetProtocolButton } from './ResetProtocolButton';
 
-const getUser = vi.fn();
-const del = vi.fn();
-const update = vi.fn();
+const rpc = vi.fn();
 const refresh = vi.fn();
 
 vi.mock('@/lib/supabase/client', () => ({
   createClient: () => ({
-    auth: { getUser: () => getUser() },
-    from: (table: string) => {
-      if (table === 'checkins') {
-        return { delete: () => ({ eq: (...args: unknown[]) => del(...args) }) };
-      }
-      return { update: (...args: unknown[]) => ({ eq: (...eqArgs: unknown[]) => update(...args, ...eqArgs) }) };
-    },
+    rpc: (...args: unknown[]) => rpc(...args),
   }),
 }));
 vi.mock('next/navigation', () => ({
@@ -25,9 +17,7 @@ vi.mock('next/navigation', () => ({
 
 describe('ResetProtocolButton', () => {
   beforeEach(() => {
-    getUser.mockReset();
-    del.mockReset();
-    update.mockReset();
+    rpc.mockReset();
     refresh.mockReset();
   });
 
@@ -44,19 +34,29 @@ describe('ResetProtocolButton', () => {
     expect(screen.getByText('Sí, recomenzar')).toBeInTheDocument();
     await user.click(screen.getByText('Cancelar'));
     expect(screen.queryByText('Sí, recomenzar')).not.toBeInTheDocument();
-    expect(del).not.toHaveBeenCalled();
+    expect(rpc).not.toHaveBeenCalled();
   });
 
-  it('al confirmar, borra los checkins, reinicia protocol_start_date y refresca', async () => {
-    getUser.mockResolvedValue({ data: { user: { id: 'user-1' } } });
-    del.mockResolvedValue({ error: null });
-    update.mockResolvedValue({ error: null });
+  it('al confirmar, llama al RPC reset_protocol y refresca', async () => {
+    rpc.mockResolvedValue({ error: null });
     const user = userEvent.setup();
     render(<ResetProtocolButton />);
     await user.click(screen.getByText('↺ Recomenzar protocolo'));
     await user.click(screen.getByText('Sí, recomenzar'));
 
     await waitFor(() => expect(refresh).toHaveBeenCalled());
-    expect(del).toHaveBeenCalledWith('user_id', 'user-1');
+    expect(rpc).toHaveBeenCalledWith('reset_protocol');
+  });
+
+  it('si el RPC falla, muestra un mensaje de error y no refresca', async () => {
+    rpc.mockResolvedValue({ error: { message: 'fail' } });
+    const user = userEvent.setup();
+    render(<ResetProtocolButton />);
+    await user.click(screen.getByText('↺ Recomenzar protocolo'));
+    await user.click(screen.getByText('Sí, recomenzar'));
+
+    expect(await screen.findByText(/No pudimos reiniciar tu protocolo/)).toBeInTheDocument();
+    expect(refresh).not.toHaveBeenCalled();
+    expect(screen.getByText('Sí, recomenzar')).toBeInTheDocument();
   });
 });
