@@ -138,6 +138,31 @@ describe('SuccessScreen', () => {
     expect(signInWithOtp).toHaveBeenCalledTimes(2);
   });
 
+  it('al reenviar el código, no vuelve a mostrar el formulario de email mientras la petición está en curso', async () => {
+    signInWithOtp.mockResolvedValue({ error: null });
+    const user = userEvent.setup();
+    render(<SuccessScreen nombre="Ana" />);
+    await user.type(screen.getByLabelText('Correo electrónico'), 'ana@example.com');
+    await user.click(screen.getByText('VER MI PROTOCOLO'));
+    await screen.findByLabelText('Código de 6 dígitos');
+
+    let resolveOtp: (value: unknown) => void;
+    signInWithOtp.mockImplementation(
+      () =>
+        new Promise((resolve) => {
+          resolveOtp = resolve;
+        })
+    );
+
+    await user.click(screen.getByText('¿No llegó? Reenviar código'));
+
+    expect(screen.getByLabelText('Código de 6 dígitos')).toBeInTheDocument();
+    expect(screen.queryByLabelText('Correo electrónico')).not.toBeInTheDocument();
+
+    resolveOtp!({ error: null });
+    expect(await screen.findByLabelText('Código de 6 dígitos')).toBeInTheDocument();
+  });
+
   it('muestra un error terminal si completeSignIn falla', async () => {
     signInWithOtp.mockResolvedValue({ error: null });
     verifyOtp.mockResolvedValue({ data: { user: { id: 'user-1' } }, error: null });

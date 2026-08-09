@@ -9,7 +9,15 @@ type SuccessScreenProps = {
   nombre: string;
 };
 
-type Status = 'idle' | 'sending' | 'send-error' | 'code-sent' | 'verifying' | 'code-error' | 'signin-error';
+type Status =
+  | 'idle'
+  | 'sending'
+  | 'send-error'
+  | 'code-sent'
+  | 'resending'
+  | 'verifying'
+  | 'code-error'
+  | 'signin-error';
 
 export function SuccessScreen({ nombre }: SuccessScreenProps) {
   const router = useRouter();
@@ -19,6 +27,17 @@ export function SuccessScreen({ nombre }: SuccessScreenProps) {
 
   async function handleSendCode() {
     setStatus('sending');
+    try {
+      const supabase = createClient();
+      const { error } = await supabase.auth.signInWithOtp({ email: email.trim() });
+      setStatus(error ? 'send-error' : 'code-sent');
+    } catch {
+      setStatus('send-error');
+    }
+  }
+
+  async function handleResendCode() {
+    setStatus('resending');
     try {
       const supabase = createClient();
       const { error } = await supabase.auth.signInWithOtp({ email: email.trim() });
@@ -50,7 +69,8 @@ export function SuccessScreen({ nombre }: SuccessScreenProps) {
     }
   }
 
-  const showCodeForm = status === 'code-sent' || status === 'verifying' || status === 'code-error';
+  const showCodeForm =
+    status === 'code-sent' || status === 'verifying' || status === 'code-error' || status === 'resending';
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-6 text-center">
@@ -88,13 +108,18 @@ export function SuccessScreen({ nombre }: SuccessScreenProps) {
           ) : null}
           <button
             type="submit"
-            disabled={status === 'verifying' || code.trim().length === 0}
+            disabled={status === 'verifying' || status === 'resending' || code.trim().length === 0}
             className="mt-3 min-h-[44px] w-full rounded-full bg-brand px-6 py-3 text-lg font-bold text-foreground disabled:opacity-40"
           >
             {status === 'verifying' ? 'Confirmando…' : 'Confirmar'}
           </button>
-          <button type="button" onClick={handleSendCode} className="mt-3 text-sm text-neutral-500 underline">
-            ¿No llegó? Reenviar código
+          <button
+            type="button"
+            onClick={handleResendCode}
+            disabled={status === 'resending' || status === 'verifying'}
+            className="mt-3 text-sm text-neutral-500 underline disabled:opacity-40"
+          >
+            {status === 'resending' ? 'Reenviando…' : '¿No llegó? Reenviar código'}
           </button>
         </form>
       ) : (

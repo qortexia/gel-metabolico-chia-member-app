@@ -4,8 +4,9 @@ import userEvent from '@testing-library/user-event';
 import { OnboardingFunnel } from './OnboardingFunnel';
 import { useOnboardingStore } from '@/lib/store';
 
+const push = vi.fn();
 vi.mock('next/navigation', () => ({
-  useRouter: () => ({ push: vi.fn() }),
+  useRouter: () => ({ push }),
 }));
 
 describe('OnboardingFunnel', () => {
