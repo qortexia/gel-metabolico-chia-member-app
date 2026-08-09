@@ -92,13 +92,15 @@ Deno.serve(async (req) => {
         .from('profiles')
         .update({ last_reminder_sent_at: todayMx })
         .eq('id', profile.id)
-        .neq('last_reminder_sent_at', todayMx)
+        .or(`last_reminder_sent_at.is.null,last_reminder_sent_at.neq.${todayMx}`)
         .select('id');
 
-      if (claimError || !claimed || claimed.length === 0) {
-        // Either the update failed, or another concurrent invocation already claimed this profile today.
+      if (claimError) {
+        console.error(`Claim failed for profile ${profile.id}`, claimError);
+        failed += 1;
         continue;
       }
+      if (!claimed || claimed.length === 0) continue; // already claimed by a concurrent run, or not eligible — not an error
 
       const { data: userData, error: userError } = await supabase.auth.admin.getUserById(profile.id);
       if (userError || !userData?.user?.email) {
