@@ -1,3 +1,6 @@
+import { readFileSync } from 'node:fs';
+import { fileURLToPath } from 'node:url';
+import path from 'node:path';
 import { describe, it, expect } from 'vitest';
 import { isEligibleForReminder, getMexicoCityDate, type ReminderCandidate } from './reminders';
 
@@ -69,5 +72,27 @@ describe('isEligibleForReminder', () => {
     // protocolStartDate 2026-07-20 + 21 días = 2026-08-10 → día 22
     const candidate: ReminderCandidate = { ...base, protocolStartDate: '2026-07-20' };
     expect(isEligibleForReminder(candidate, new Date('2026-08-10T12:00:00Z'))).toBe(false);
+  });
+});
+
+describe('dual-runtime safety', () => {
+  it('reminders.ts contains no imports and no Node/browser-only globals', () => {
+    // Note: this project's Vitest environment is jsdom, whose global URL resolves
+    // relative URLs against jsdom's document location (http://localhost:3000/) rather
+    // than the real file path, so `new URL('./reminders.ts', import.meta.url)` would
+    // resolve to an http: URL here — use fileURLToPath + path.join instead.
+    const dir = path.dirname(fileURLToPath(import.meta.url));
+    const fullSource = readFileSync(path.join(dir, 'reminders.ts'), 'utf-8');
+    // Strip full-line comments before scanning so the guard doesn't trip on the
+    // dual-runtime warning comment itself (which mentions these patterns by name)
+    // — the point is to catch actual code violations, not documentation prose.
+    const source = fullSource
+      .split('\n')
+      .filter((line) => !line.trim().startsWith('//'))
+      .join('\n');
+    expect(source).not.toMatch(/^\s*import\s/m);
+    expect(source).not.toMatch(/\brequire\(/);
+    expect(source).not.toMatch(/\bprocess\./);
+    expect(source).not.toMatch(/@\//);
   });
 });

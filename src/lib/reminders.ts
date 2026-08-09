@@ -1,3 +1,11 @@
+// IMPORTANT: this file is imported by TWO runtimes — this project's normal Node/Vitest
+// toolchain (see reminders.test.ts) AND the Deno Edge Function at
+// supabase/functions/send-daily-reminders/index.ts (via a relative import with an
+// explicit .ts extension — Deno resolves local TS files natively, no bundler).
+// Keep this file free of ANY imports, Node-only APIs (process.*, Buffer, etc.), and
+// Next.js/browser-only APIs. Only built-in Intl/Date/Math/String are safe here.
+// tsc and Vitest do NOT catch a violation of this — supabase/functions is excluded
+// from tsconfig.json, and there is no Deno test runner in this repo.
 export interface ReminderCandidate {
   horaDespertar: string;
   remindersEnabled: boolean;
