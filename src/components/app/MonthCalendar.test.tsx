@@ -8,8 +8,12 @@ describe('MonthCalendar', () => {
     // Scoped to 'Date' only: faking setTimeout globally deadlocks userEvent.click()
     // under React 18 here, because jsdom has no MessageChannel, so React's scheduler
     // falls back to setTimeout(0) — which act() then waits on forever once it's faked.
+    // Explicit 'Z' (UTC) — a bare local-time string here is timezone-dependent and was a
+    // latent flakiness risk; 18:00 UTC is 12:00 in Mexico City (fixed UTC-6), matching the
+    // original intent of "midday on Aug 8" but now deterministic regardless of the machine
+    // running the tests.
     vi.useFakeTimers({ toFake: ['Date'] });
-    vi.setSystemTime(new Date('2026-08-08T12:00:00'));
+    vi.setSystemTime(new Date('2026-08-08T18:00:00Z'));
   });
 
   afterEach(() => {
@@ -43,5 +47,15 @@ describe('MonthCalendar', () => {
     await user.click(screen.getByLabelText('Mes anterior'));
     await user.click(screen.getByLabelText('Mes anterior'));
     expect(screen.getByText(/julio de 2026/i)).toBeInTheDocument();
+  });
+
+  it('marca "hoy" según la fecha de Ciudad de México, no la fecha UTC', async () => {
+    // 2026-08-09T05:00:00Z es 2026-08-08T23:00:00 en Ciudad de México (día anterior en UTC).
+    vi.setSystemTime(new Date('2026-08-09T05:00:00Z'));
+    const user = userEvent.setup({ delay: null });
+    render(<MonthCalendar checkinDates={[]} />);
+    // Si usara la fecha UTC (9), el día 8 no mostraría "HOY" al hacer clic.
+    await user.click(screen.getByText('8'));
+    expect(screen.getByText('HOY')).toBeInTheDocument();
   });
 });

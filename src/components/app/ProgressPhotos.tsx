@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
 import { resizeImage } from '@/lib/resizeImage';
+import { getMexicoCityDate } from '@/lib/reminders';
 
 type Photo = { id: string; takenAt: string; url: string | null };
 
@@ -27,7 +28,7 @@ export function ProgressPhotos({ userId, photos }: { userId: string; photos: Pho
       if (uploadError) throw uploadError;
       const { error: insertError } = await supabase
         .from('progress_photos')
-        .insert({ user_id: userId, storage_path: path, taken_at: new Date().toISOString().slice(0, 10) });
+        .insert({ user_id: userId, storage_path: path, taken_at: getMexicoCityDate(new Date()) });
       if (insertError) throw insertError;
       router.refresh();
     } catch {

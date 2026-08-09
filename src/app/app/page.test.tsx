@@ -84,4 +84,15 @@ describe('AppPage (Início)', () => {
     render(await AppPage());
     expect(screen.getByTestId('reminders-toggle')).toHaveTextContent('activado');
   });
+
+  it('usa la fecha de Ciudad de México, no UTC, para "hoy"', async () => {
+    // 2026-08-09T05:00:00Z es 2026-08-08T23:00:00 en Ciudad de México (día anterior en UTC).
+    vi.setSystemTime(new Date('2026-08-09T05:00:00Z'));
+    select.mockResolvedValue({ data: [{ date: '2026-08-08' }] });
+    render(await AppPage());
+    // Si usara la fecha UTC (2026-08-09), no encontraría el check-in de "hoy" (guardado el 08)
+    // y mostraría "Día 9 de 21" en vez de "Día 8 de 21".
+    expect(screen.getByTestId('checkin-button')).toHaveTextContent('hecho');
+    expect(screen.getByText(/Día 8 de 21/)).toBeInTheDocument();
+  });
 });

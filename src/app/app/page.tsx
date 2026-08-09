@@ -5,6 +5,7 @@ import { CheckinButton } from '@/components/app/CheckinButton';
 import { MonthCalendar } from '@/components/app/MonthCalendar';
 import { ResetProtocolButton } from '@/components/app/ResetProtocolButton';
 import { RemindersToggle } from '@/components/app/RemindersToggle';
+import { getMexicoCityDate } from '@/lib/reminders';
 
 export default async function AppPage() {
   const profile = await getCurrentProfile();
@@ -12,7 +13,7 @@ export default async function AppPage() {
   const { data: checkins } = await supabase.from('checkins').select('date').eq('user_id', profile.id);
   const checkinDates = (checkins ?? []).map((c: { date: string }) => c.date);
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = getMexicoCityDate(new Date());
   const daysSinceStart = Math.floor((Date.parse(today) - Date.parse(profile.protocol_start_date)) / 86400000) + 1;
   const dayNumber = Math.min(daysSinceStart, 21);
   const streak = calculateStreak(checkinDates, today);

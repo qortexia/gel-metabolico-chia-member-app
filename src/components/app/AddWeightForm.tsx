@@ -3,6 +3,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { getMexicoCityDate } from '@/lib/reminders';
 
 export function AddWeightForm({ userId }: { userId: string }) {
   const router = useRouter();
@@ -20,7 +21,7 @@ export function AddWeightForm({ userId }: { userId: string }) {
     const supabase = createClient();
     const { error: insertError } = await supabase
       .from('weight_logs')
-      .insert({ user_id: userId, peso: value, date: new Date().toISOString().slice(0, 10) });
+      .insert({ user_id: userId, peso: value, date: getMexicoCityDate(new Date()) });
     setSaving(false);
     if (insertError) {
       setError(true);

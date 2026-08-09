@@ -4,6 +4,7 @@ import { AddWeightForm } from '@/components/app/AddWeightForm';
 import { AchievementsCard } from '@/components/app/AchievementsCard';
 import { ProgressPhotos } from '@/components/app/ProgressPhotos';
 import { calculateAchievements } from '@/lib/achievements';
+import { getMexicoCityDate } from '@/lib/reminders';
 
 export default async function ProgressPage() {
   const profile = await getCurrentProfile();
@@ -20,7 +21,7 @@ export default async function ProgressPage() {
   const current = logs.length > 0 ? logs[logs.length - 1].peso : null;
   const diff = initial !== null && current !== null ? Math.round((current - initial) * 10) / 10 : null;
 
-  const today = new Date().toISOString().slice(0, 10);
+  const today = getMexicoCityDate(new Date());
   const daysSinceStart = Math.floor((Date.parse(today) - Date.parse(profile.protocol_start_date)) / 86400000) + 1;
 
   const achievements = calculateAchievements({

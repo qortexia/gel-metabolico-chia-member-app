@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import { describe, it, expect, vi, afterEach } from 'vitest';
 import { calculateAchievements, calculateStreak } from './achievements';
 
 describe('calculateStreak', () => {
@@ -71,5 +71,21 @@ describe('calculateAchievements', () => {
   it('desbloquea "21 días" en el día 21', () => {
     const result = calculateAchievements({ ...base, protocolStartDate: '2026-07-19', today: '2026-08-08' });
     expect(result.find((a) => a.id === 'complete')!.unlocked).toBe(true);
+  });
+
+  it('sin "today" explícito, usa la fecha de Ciudad de México (no UTC)', () => {
+    // 2026-08-10T05:00:00Z es 2026-08-09T23:00:00 en Ciudad de México (día anterior en UTC).
+    // Con protocolStartDate 2026-07-28: si usa MX (2026-08-09), van 13 días — "halfway" (>=14) NO
+    // desbloqueada. Si usara UTC (2026-08-10) por error, irían 14 días — SÍ desbloqueada. El
+    // resultado distingue cuál fecha se usó de verdad.
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-08-10T05:00:00Z'));
+    const result = calculateAchievements({ ...base, protocolStartDate: '2026-07-28', today: undefined });
+    expect(result.find((a) => a.id === 'halfway')!.unlocked).toBe(false);
+    vi.useRealTimers();
+  });
+
+  afterEach(() => {
+    vi.useRealTimers();
   });
 });

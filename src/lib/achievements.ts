@@ -1,3 +1,5 @@
+import { getMexicoCityDate } from './reminders';
+
 export interface Achievement {
   id: string;
   title: string;
@@ -39,7 +41,7 @@ function calculateWeightLoss(weightLogs: { peso: number; date: string }[]): numb
 }
 
 export function calculateAchievements(input: AchievementsInput): Achievement[] {
-  const today = input.today ?? new Date().toISOString().slice(0, 10);
+  const today = input.today ?? getMexicoCityDate(new Date());
   const daysSinceStart = daysBetween(input.protocolStartDate, today) + 1;
   const streak = calculateStreak(input.checkinDates, today);
   const weightLoss = calculateWeightLoss(input.weightLogs);

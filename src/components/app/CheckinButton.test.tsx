@@ -65,4 +65,19 @@ describe('CheckinButton', () => {
 
     expect(screen.getByText('Marcar mi check-in')).toBeInTheDocument();
   });
+
+  it('guarda la fecha de Ciudad de México, no la fecha UTC', async () => {
+    // 2026-08-10T05:00:00Z es 2026-08-09T23:00:00 en Ciudad de México — fechas UTC/MX distintas.
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-08-10T05:00:00Z'));
+    insert.mockResolvedValue({ error: null });
+    const user = userEvent.setup({ delay: null });
+    render(<CheckinButton userId="user-1" alreadyCheckedInToday={false} />);
+
+    await user.click(screen.getByText('Marcar mi check-in'));
+
+    await waitFor(() => expect(insert).toHaveBeenCalled());
+    expect(insert).toHaveBeenCalledWith({ user_id: 'user-1', date: '2026-08-09' });
+    vi.useRealTimers();
+  });
 });

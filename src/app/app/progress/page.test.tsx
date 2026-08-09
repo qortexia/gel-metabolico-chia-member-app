@@ -38,6 +38,17 @@ describe('ProgressPage', () => {
     expect(screen.getByText(/Aún no has registrado tu peso/)).toBeInTheDocument();
   });
 
+  it('calcula el día del protocolo con la fecha de Ciudad de México, no UTC', async () => {
+    // 2026-08-09T05:00:00Z es 2026-08-08T23:00:00 en Ciudad de México (día anterior en UTC).
+    // protocol_start_date 2026-08-01: en MX van 8 días, en UTC (por error) irían 9.
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-08-09T05:00:00Z'));
+    from.mockImplementation(() => mockTable([]));
+    render(await ProgressPage());
+    expect(screen.getByText(/Estás en el día 8 de 21/)).toBeInTheDocument();
+    vi.useRealTimers();
+  });
+
   it('muestra Inicial/Actual/Diferencia cuando hay registros', async () => {
     from.mockImplementation((table: string) =>
       mockTable(

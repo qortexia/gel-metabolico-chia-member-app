@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import confetti from 'canvas-confetti';
 import { createClient } from '@/lib/supabase/client';
+import { getMexicoCityDate } from '@/lib/reminders';
 
 type CheckinButtonProps = {
   userId: string;
@@ -24,7 +25,7 @@ export function CheckinButton({ userId, alreadyCheckedInToday }: CheckinButtonPr
     setSaving(true);
     setError(false);
     const supabase = createClient();
-    const today = new Date().toISOString().slice(0, 10);
+    const today = getMexicoCityDate(new Date());
     const { error: insertError } = await supabase.from('checkins').insert({ user_id: userId, date: today });
     setSaving(false);
     if (insertError) {

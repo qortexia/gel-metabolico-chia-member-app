@@ -52,4 +52,21 @@ describe('AddWeightForm', () => {
 
     expect(await screen.findByText('Error al guardar')).toBeInTheDocument();
   });
+
+  it('guarda la fecha de Ciudad de México, no la fecha UTC', async () => {
+    // 2026-08-10T05:00:00Z es 2026-08-09T23:00:00 en Ciudad de México.
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-08-10T05:00:00Z'));
+    insert.mockResolvedValue({ error: null });
+    const user = userEvent.setup({ delay: null });
+    render(<AddWeightForm userId="user-1" />);
+
+    await user.click(screen.getByLabelText('Agregar registro de peso'));
+    await user.type(screen.getByLabelText('Peso en kg'), '68.5');
+    await user.click(screen.getByText('Guardar'));
+
+    await waitFor(() => expect(insert).toHaveBeenCalled());
+    expect(insert).toHaveBeenCalledWith({ user_id: 'user-1', peso: 68.5, date: '2026-08-09' });
+    vi.useRealTimers();
+  });
 });

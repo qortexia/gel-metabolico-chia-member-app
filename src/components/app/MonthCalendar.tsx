@@ -1,6 +1,7 @@
 'use client';
 
 import { useState } from 'react';
+import { getMexicoCityDate } from '@/lib/reminders';
 
 type MonthCalendarProps = {
   checkinDates: string[];
@@ -15,11 +16,16 @@ function toISODate(d: Date): string {
   return `${year}-${month}-${day}`;
 }
 
+function viewDateFromISO(iso: string): Date {
+  const [year, month, day] = iso.split('-').map(Number);
+  return new Date(year, month - 1, day);
+}
+
 export function MonthCalendar({ checkinDates }: MonthCalendarProps) {
-  const [viewDate, setViewDate] = useState(() => new Date());
+  const todayISO = getMexicoCityDate(new Date());
+  const [viewDate, setViewDate] = useState(() => viewDateFromISO(todayISO));
   const [selectedDate, setSelectedDate] = useState<string | null>(null);
 
-  const todayISO = toISODate(new Date());
   const checkinSet = new Set(checkinDates);
   const year = viewDate.getFullYear();
   const month = viewDate.getMonth();

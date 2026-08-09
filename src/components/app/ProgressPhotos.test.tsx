@@ -69,4 +69,21 @@ describe('ProgressPhotos', () => {
     render(<ProgressPhotos userId="user-1" photos={[]} />);
     expect(screen.getByText(/Solo tú puedes ver tus fotos/)).toBeInTheDocument();
   });
+
+  it('guarda taken_at con la fecha de Ciudad de México, no la fecha UTC', async () => {
+    // 2026-08-10T05:00:00Z es 2026-08-09T23:00:00 en Ciudad de México.
+    vi.useFakeTimers({ toFake: ['Date'] });
+    vi.setSystemTime(new Date('2026-08-10T05:00:00Z'));
+    upload.mockResolvedValue({ error: null });
+    insert.mockResolvedValue({ error: null });
+    const user = userEvent.setup({ delay: null });
+    render(<ProgressPhotos userId="user-1" photos={[]} />);
+
+    const file = new File(['fake'], 'foto.jpg', { type: 'image/jpeg' });
+    await user.upload(document.querySelector('input[type="file"]')!, file);
+
+    await waitFor(() => expect(insert).toHaveBeenCalled());
+    expect(insert).toHaveBeenCalledWith(expect.objectContaining({ taken_at: '2026-08-09' }));
+    vi.useRealTimers();
+  });
 });
