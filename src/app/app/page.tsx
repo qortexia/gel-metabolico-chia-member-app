@@ -21,7 +21,7 @@ export default async function AppPage() {
 
   return (
     <div className="px-4 pb-24 pt-6">
-      <div className="flex items-center justify-end gap-3">
+      <div className="flex flex-col items-end gap-2">
         <RemindersToggle userId={profile.id} enabled={profile.reminders_enabled} />
         <ResetProtocolButton />
       </div>
