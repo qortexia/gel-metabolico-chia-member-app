@@ -1,31 +1,56 @@
 'use client';
 
 import { useState } from 'react';
+import { useRouter } from 'next/navigation';
 import { createClient } from '@/lib/supabase/client';
+import { completeSignIn } from '@/lib/completeSignIn';
 
 type SuccessScreenProps = {
   nombre: string;
 };
 
-type Status = 'idle' | 'sending' | 'sent' | 'error';
+type Status = 'idle' | 'sending' | 'send-error' | 'code-sent' | 'verifying' | 'code-error' | 'signin-error';
 
 export function SuccessScreen({ nombre }: SuccessScreenProps) {
+  const router = useRouter();
   const [email, setEmail] = useState('');
+  const [code, setCode] = useState('');
   const [status, setStatus] = useState<Status>('idle');
 
-  const handleSubmit = async () => {
+  async function handleSendCode() {
     setStatus('sending');
     try {
       const supabase = createClient();
-      const { error } = await supabase.auth.signInWithOtp({
-        email: email.trim(),
-        options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
-      });
-      setStatus(error ? 'error' : 'sent');
+      const { error } = await supabase.auth.signInWithOtp({ email: email.trim() });
+      setStatus(error ? 'send-error' : 'code-sent');
     } catch {
-      setStatus('error');
+      setStatus('send-error');
     }
-  };
+  }
+
+  async function handleVerifyCode() {
+    setStatus('verifying');
+    try {
+      const supabase = createClient();
+      const { data, error } = await supabase.auth.verifyOtp({
+        email: email.trim(),
+        token: code.trim(),
+        type: 'email',
+      });
+      if (error || !data.user) {
+        setStatus('code-error');
+        return;
+      }
+      const result = await completeSignIn(supabase, data.user, router);
+      if (result.error) {
+        setStatus('signin-error');
+      }
+    } catch {
+      setStatus('code-error');
+    }
+  }
+
+  const showCodeForm = status === 'code-sent' || status === 'verifying' || status === 'code-error';
 
   return (
     <div className="flex min-h-screen flex-col items-center justify-center bg-background px-6 text-center">
@@ -37,15 +62,46 @@ export function SuccessScreen({ nombre }: SuccessScreenProps) {
         Tu dosis, horarios y checklist de 21 días ya están listos para que empieces ahora.
       </p>
 
-      {status === 'sent' ? (
-        <p className="mt-6 max-w-xs text-neutral-700">
-          Revisa tu correo — te enviamos un enlace para entrar a tu protocolo.
-        </p>
+      {status === 'signin-error' ? (
+        <p className="mt-6 max-w-xs text-danger">No pudimos completar tu acceso. Intenta de nuevo desde el inicio.</p>
+      ) : showCodeForm ? (
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleVerifyCode();
+          }}
+          className="mt-6 w-full max-w-xs"
+        >
+          <p className="text-neutral-700">Revisa tu correo — te enviamos un código de 6 dígitos.</p>
+          <input
+            type="text"
+            inputMode="numeric"
+            maxLength={6}
+            value={code}
+            onChange={(e) => setCode(e.target.value)}
+            placeholder="123456"
+            aria-label="Código de 6 dígitos"
+            className="mt-3 w-full rounded-card border border-neutral-300 px-4 py-3 text-center text-lg tracking-widest"
+          />
+          {status === 'code-error' ? (
+            <p className="mt-2 text-sm text-danger">Código incorrecto o expirado. Intenta de nuevo.</p>
+          ) : null}
+          <button
+            type="submit"
+            disabled={status === 'verifying' || code.trim().length === 0}
+            className="mt-3 min-h-[44px] w-full rounded-full bg-brand px-6 py-3 text-lg font-bold text-foreground disabled:opacity-40"
+          >
+            {status === 'verifying' ? 'Confirmando…' : 'Confirmar'}
+          </button>
+          <button type="button" onClick={handleSendCode} className="mt-3 text-sm text-neutral-500 underline">
+            ¿No llegó? Reenviar código
+          </button>
+        </form>
       ) : (
         <form
           onSubmit={(e) => {
             e.preventDefault();
-            handleSubmit();
+            handleSendCode();
           }}
           className="mt-6 w-full max-w-xs"
         >
@@ -57,8 +113,8 @@ export function SuccessScreen({ nombre }: SuccessScreenProps) {
             aria-label="Correo electrónico"
             className="w-full rounded-card border border-neutral-300 px-4 py-3 text-lg"
           />
-          {status === 'error' ? (
-            <p className="mt-2 text-sm text-danger">No pudimos enviar el enlace. Intenta de nuevo.</p>
+          {status === 'send-error' ? (
+            <p className="mt-2 text-sm text-danger">No pudimos enviar el código. Intenta de nuevo.</p>
           ) : null}
           <button
             type="submit"
@@ -67,7 +123,7 @@ export function SuccessScreen({ nombre }: SuccessScreenProps) {
           >
             {status === 'sending' ? 'Enviando…' : 'VER MI PROTOCOLO'}
           </button>
-          <p className="mt-2 text-sm text-neutral-500">Te enviaremos un enlace mágico para entrar.</p>
+          <p className="mt-2 text-sm text-neutral-500">Te enviaremos un código para entrar.</p>
         </form>
       )}
     </div>
