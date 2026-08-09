@@ -1,19 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useRouter } from 'next/navigation';
 import confetti from 'canvas-confetti';
 import { createClient } from '@/lib/supabase/client';
 
 type CheckinButtonProps = {
   userId: string;
   alreadyCheckedInToday: boolean;
-  onCheckin?: () => void;
 };
 
-export function CheckinButton({ userId, alreadyCheckedInToday, onCheckin }: CheckinButtonProps) {
+export function CheckinButton({ userId, alreadyCheckedInToday }: CheckinButtonProps) {
+  const router = useRouter();
   const [done, setDone] = useState(alreadyCheckedInToday);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState(false);
+
+  useEffect(() => {
+    setDone(alreadyCheckedInToday);
+  }, [alreadyCheckedInToday]);
 
   async function handleClick() {
     setSaving(true);
@@ -28,7 +33,7 @@ export function CheckinButton({ userId, alreadyCheckedInToday, onCheckin }: Chec
     }
     setDone(true);
     confetti({ particleCount: 120, spread: 70, origin: { y: 0.7 } });
-    onCheckin?.();
+    router.refresh();
   }
 
   if (done) {
