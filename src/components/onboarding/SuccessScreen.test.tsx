@@ -61,7 +61,7 @@ describe('SuccessScreen', () => {
     await user.type(screen.getByLabelText('Correo electrónico'), 'ana@example.com');
     await user.click(screen.getByText('VER MI PROTOCOLO'));
     expect(signInWithOtp).toHaveBeenCalledWith({ email: 'ana@example.com' });
-    expect(await screen.findByLabelText('Código de 6 dígitos')).toBeInTheDocument();
+    expect(await screen.findByLabelText('Código de 8 dígitos')).toBeInTheDocument();
   });
 
   it('muestra un error si signInWithOtp falla, y deja el formulario de email disponible', async () => {
@@ -106,10 +106,10 @@ describe('SuccessScreen', () => {
     render(<SuccessScreen nombre="Ana" />);
     await user.type(screen.getByLabelText('Correo electrónico'), 'ana@example.com');
     await user.click(screen.getByText('VER MI PROTOCOLO'));
-    await user.type(await screen.findByLabelText('Código de 6 dígitos'), '123456');
+    await user.type(await screen.findByLabelText('Código de 8 dígitos'), '12345678');
     await user.click(screen.getByText('Confirmar'));
 
-    expect(verifyOtp).toHaveBeenCalledWith({ email: 'ana@example.com', token: '123456', type: 'email' });
+    expect(verifyOtp).toHaveBeenCalledWith({ email: 'ana@example.com', token: '12345678', type: 'email' });
     expect(completeSignIn).toHaveBeenCalledWith(expect.anything(), { id: 'user-1' }, expect.anything());
   });
 
@@ -120,11 +120,11 @@ describe('SuccessScreen', () => {
     render(<SuccessScreen nombre="Ana" />);
     await user.type(screen.getByLabelText('Correo electrónico'), 'ana@example.com');
     await user.click(screen.getByText('VER MI PROTOCOLO'));
-    await user.type(await screen.findByLabelText('Código de 6 dígitos'), '000000');
+    await user.type(await screen.findByLabelText('Código de 8 dígitos'), '00000000');
     await user.click(screen.getByText('Confirmar'));
 
     expect(await screen.findByText(/Código incorrecto o expirado/)).toBeInTheDocument();
-    expect(screen.getByLabelText('Código de 6 dígitos')).toBeInTheDocument();
+    expect(screen.getByLabelText('Código de 8 dígitos')).toBeInTheDocument();
     expect(completeSignIn).not.toHaveBeenCalled();
   });
 
@@ -134,7 +134,7 @@ describe('SuccessScreen', () => {
     render(<SuccessScreen nombre="Ana" />);
     await user.type(screen.getByLabelText('Correo electrónico'), 'ana@example.com');
     await user.click(screen.getByText('VER MI PROTOCOLO'));
-    await screen.findByLabelText('Código de 6 dígitos');
+    await screen.findByLabelText('Código de 8 dígitos');
 
     await user.click(screen.getByText('¿No llegó? Reenviar código'));
 
@@ -147,7 +147,7 @@ describe('SuccessScreen', () => {
     render(<SuccessScreen nombre="Ana" />);
     await user.type(screen.getByLabelText('Correo electrónico'), 'ana@example.com');
     await user.click(screen.getByText('VER MI PROTOCOLO'));
-    await screen.findByLabelText('Código de 6 dígitos');
+    await screen.findByLabelText('Código de 8 dígitos');
 
     let resolveOtp: (value: unknown) => void;
     signInWithOtp.mockImplementation(
@@ -159,11 +159,11 @@ describe('SuccessScreen', () => {
 
     await user.click(screen.getByText('¿No llegó? Reenviar código'));
 
-    expect(screen.getByLabelText('Código de 6 dígitos')).toBeInTheDocument();
+    expect(screen.getByLabelText('Código de 8 dígitos')).toBeInTheDocument();
     expect(screen.queryByLabelText('Correo electrónico')).not.toBeInTheDocument();
 
     resolveOtp!({ error: null });
-    expect(await screen.findByLabelText('Código de 6 dígitos')).toBeInTheDocument();
+    expect(await screen.findByLabelText('Código de 8 dígitos')).toBeInTheDocument();
   });
 
   it('muestra un error terminal si completeSignIn falla', async () => {
@@ -177,7 +177,7 @@ describe('SuccessScreen', () => {
     render(<SuccessScreen nombre="Ana" />);
     await user.type(screen.getByLabelText('Correo electrónico'), 'ana@example.com');
     await user.click(screen.getByText('VER MI PROTOCOLO'));
-    await user.type(await screen.findByLabelText('Código de 6 dígitos'), '123456');
+    await user.type(await screen.findByLabelText('Código de 8 dígitos'), '12345678');
     await user.click(screen.getByText('Confirmar'));
 
     expect(await screen.findByText(/No pudimos completar tu acceso/)).toBeInTheDocument();
@@ -190,12 +190,12 @@ describe('SuccessScreen', () => {
     render(<SuccessScreen nombre="Ana" />);
     await user.type(screen.getByLabelText('Correo electrónico'), 'ana@example.com');
     await user.click(screen.getByText('VER MI PROTOCOLO'));
-    await screen.findByLabelText('Código de 6 dígitos');
+    await screen.findByLabelText('Código de 8 dígitos');
 
     await user.click(screen.getByText('¿No llegó? Reenviar código'));
 
     expect(await screen.findByText(/No pudimos reenviar el código/)).toBeInTheDocument();
-    expect(screen.getByLabelText('Código de 6 dígitos')).toBeInTheDocument();
+    expect(screen.getByLabelText('Código de 8 dígitos')).toBeInTheDocument();
     expect(screen.getByText('¿No llegó? Reenviar código')).toBeInTheDocument();
   });
 
@@ -209,7 +209,7 @@ describe('SuccessScreen', () => {
     render(<SuccessScreen nombre="Ana" />);
     await user.type(screen.getByLabelText('Correo electrónico'), 'ana@example.com');
     await user.click(screen.getByText('VER MI PROTOCOLO'));
-    await user.type(await screen.findByLabelText('Código de 6 dígitos'), '000000');
+    await user.type(await screen.findByLabelText('Código de 8 dígitos'), '00000000');
     await user.click(screen.getByText('Confirmar'));
 
     expect(await screen.findByText(/Demasiados intentos/)).toBeInTheDocument();
@@ -224,7 +224,7 @@ describe('SuccessScreen', () => {
     render(<SuccessScreen nombre="Ana" />);
     await user.type(screen.getByLabelText('Correo electrónico'), 'ana@example.com');
     await user.click(screen.getByText('VER MI PROTOCOLO'));
-    await user.type(await screen.findByLabelText('Código de 6 dígitos'), '123456');
+    await user.type(await screen.findByLabelText('Código de 8 dígitos'), '12345678');
     await user.click(screen.getByText('Confirmar'));
 
     expect(await screen.findByText(/Código incorrecto o expirado/)).toBeInTheDocument();

@@ -127,16 +127,16 @@ export function SuccessScreen({ nombre }: SuccessScreenProps) {
           }}
           className="mt-6 w-full max-w-xs"
         >
-          <p className="text-neutral-700">Revisa tu correo — te enviamos un código de 6 dígitos.</p>
+          <p className="text-neutral-700">Revisa tu correo — te enviamos un código de 8 dígitos.</p>
           <input
             type="text"
             inputMode="numeric"
-            maxLength={6}
+            maxLength={8}
             autoComplete="one-time-code"
             value={code}
             onChange={(e) => setCode(e.target.value)}
-            placeholder="123456"
-            aria-label="Código de 6 dígitos"
+            placeholder="12345678"
+            aria-label="Código de 8 dígitos"
             className="mt-3 w-full rounded-card border border-neutral-300 px-4 py-3 text-center text-lg tracking-widest"
           />
           {status === 'code-error' || status === 'resend-error' ? (
