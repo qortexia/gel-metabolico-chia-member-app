@@ -80,6 +80,9 @@ export function OnboardingFunnel() {
         />
       );
     default:
-      return null;
+      // Índice corrompido no localStorage nunca deve deixar a tela em branco.
+      return (
+        <NameStep {...commonProps} current={1} value={answers.nombre ?? ''} onChange={(v) => setAnswer('nombre', v)} onContinue={goNext} />
+      );
   }
 }
