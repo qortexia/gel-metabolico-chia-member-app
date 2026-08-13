@@ -22,4 +22,9 @@ describe('UpsellPage', () => {
       '/downsell'
     );
   });
+
+  it('muestra la imagen del protocolo de 90 días', () => {
+    render(<UpsellPage />);
+    expect(screen.getByAltText('Protocolo 90 Días — las tres fases')).toBeInTheDocument();
+  });
 });

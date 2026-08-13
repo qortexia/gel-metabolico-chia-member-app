@@ -23,4 +23,9 @@ describe('DownsellPage', () => {
       '/gracias'
     );
   });
+
+  it('muestra la imagen del kit de apoyo', () => {
+    render(<DownsellPage />);
+    expect(screen.getByAltText('Kit de Apoyo — las cinco herramientas')).toBeInTheDocument();
+  });
 });

@@ -39,6 +39,8 @@ export function OfferPage({
         alt={imageAlt}
         width={imageWidth}
         height={imageHeight}
+        sizes="320px"
+        priority
         className="mt-6 h-auto w-full max-w-xs rounded-card"
       />
       <ul className="mt-6 w-full max-w-xs list-none text-left text-neutral-600">
